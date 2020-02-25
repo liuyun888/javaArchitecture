@@ -18,7 +18,7 @@
     <modules>
         <module>dynamic-proxy</module>
         <module>reflection</module>
-        <module>mybatis-demo</module>
+        <module>jvm</module>
     </modules>
 
 
