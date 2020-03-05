@@ -1,16 +1,13 @@
-package com.demo.jvm;
+package com.demo.gis;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * @author Administrator
- */
 @SpringBootApplication
-public class JvmApplication {
+public class GisApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JvmApplication.class, args);
+        SpringApplication.run(GisApplication.class, args);
     }
 
 }
