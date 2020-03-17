@@ -19,7 +19,7 @@ public class SaltNcAnalyze {
 
         try {
             NetcdfFile ncfile = null;
-            ncfile = NetcdfDataset.open("E:\\workspace\\GIS\\数据\\盐度 -- NC\\Salt.nc");
+            ncfile = NetcdfDataset.open("E:\\workspace\\GIS\\数据\\盐度 -- NC\\月均盐度\\chinasea_201801_s.nc");
             // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
             String var1 = "lon";
             String var2 = "lat";

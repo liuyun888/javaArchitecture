@@ -3,26 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.java</groupId>
+        <artifactId>architecture</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.java</groupId>
-    <artifactId>architecture</artifactId>
+    <groupId>com.demo</groupId>
+    <artifactId>grafana</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>architecture</name>
-    <description>java架构系列知识点</description>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>dynamic-proxy</module>
-        <module>reflection</module>
-        <module>jvm</module>
-        <module>gis</module>
-        <module>grafana</module>
-    </modules>
-
+    <name>grafana</name>
+    <description>Demo project for prometheus+grafana+springboot2监控集成配置</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -43,6 +32,26 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.sps.metrics/metrics-opentsdb -->
+        <dependency>
+            <groupId>com.github.sps.metrics</groupId>
+            <artifactId>metrics-opentsdb</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -54,7 +63,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
     <build>

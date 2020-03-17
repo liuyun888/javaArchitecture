@@ -1,0 +1,24 @@
+server:
+  port: 1990
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 1m
+        descriptions: true
+    tags:
+      application: ${spring.application.name}
+  web:
+    server:
+      auto-time-requests: true
+  endpoints:
+    prometheus:
+      id: springmetrics
+    web:
+      exposure:
+        include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
+spring:
+  application:
+    name: gep
