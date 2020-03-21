@@ -1,0 +1,17 @@
+server:
+  port: 1990
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      jedis:
+        pool:
+        max-idle: 50
+        max-wait: 1800000ms
+        max-active: 1000
+      timeout: 5000ms
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: dev_typhoon
