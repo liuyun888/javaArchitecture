@@ -4,6 +4,8 @@ import com.demo.gis.entity.TyphoonWindField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
@@ -12,7 +14,8 @@ import lombok.experimental.Accessors;
  * @author: LiuYunKai
  * @create: 2020-03-06 14:40
  **/
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @ApiModel
 public class TyphoonWindFieldVo extends TyphoonWindField {

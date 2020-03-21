@@ -15,4 +15,5 @@ public interface WindFieldService {
      */
     boolean analyzeNCFile(MultipartFile file);
 
+    boolean analyzeNCZIPFile(MultipartFile originalFile);
 }

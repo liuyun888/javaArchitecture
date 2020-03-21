@@ -1,11 +1,12 @@
 package com.demo.gis.nc;
 
+import com.demo.gis.common.toolUtil.JacksonUtils;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @program: javaArchitecture
@@ -42,9 +43,26 @@ public class WaveNcAnalyze {
 
             int[] time = (int[]) v3.read().copyToNDJavaArray();
 
-            short[][][] swh = (short[][][]) v4.read().copyToNDJavaArray();
-            short[][][] mwd = (short[][][]) v5.read().copyToNDJavaArray();
-            short[][][] mwp = (short[][][]) v6.read().copyToNDJavaArray();
+            float[][] swh = (float[][]) v4.read().copyToNDJavaArray();
+            float[][] mwd = (float[][]) v5.read().copyToNDJavaArray();
+            float[][] mwp = (float[][]) v6.read().copyToNDJavaArray();
+
+            List infoList = new ArrayList<>();
+            Map<String, Object> UInfoMap = new HashMap<>(6);
+            UInfoMap.put("lon", lon);
+            UInfoMap.put("lat", lat);
+            UInfoMap.put("time", time);
+            UInfoMap.put("swh", swh);
+            UInfoMap.put("mwd", mwd);
+            UInfoMap.put("mwp", mwp);
+
+            infoList.add(UInfoMap);
+
+            Map<String, Object> data = new HashMap<>(1);
+            data.put("dataJson", infoList);
+            String jsonStr = JacksonUtils.toJSONString(data);
+
+            System.out.println(time[0]);
 
         } catch (IOException e1) {// TODO Auto-generated catch block
             e1.printStackTrace();

@@ -1,7 +1,11 @@
 package com.demo.gis.service.impl;
 
+import java.io.File;
+
 import com.demo.gis.common.constant.Constant;
+import com.demo.gis.common.toolUtil.FileUtils;
 import com.demo.gis.common.toolUtil.JacksonUtils;
+import com.demo.gis.controller.NetCdfController;
 import com.demo.gis.entity.TyphoonWindField;
 import com.demo.gis.repository.TyphoonWindFieldRepository;
 import com.demo.gis.service.WindFieldService;
@@ -19,6 +23,8 @@ import ucar.nc2.dataset.NetcdfDataset;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @program: ops-china
@@ -29,7 +35,7 @@ import java.util.*;
 @Service
 public class WindFieldServiceImpl implements WindFieldService, Constant {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final String TMP_DIR = System.getProperty("java.io.tmpdir") + File.separator;
+    private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 
 
     @Autowired
@@ -37,12 +43,19 @@ public class WindFieldServiceImpl implements WindFieldService, Constant {
 
     @Override
     public boolean analyzeNCFile(MultipartFile file) {
-        NetcdfFile ncFile = null;
-        String filePath = "";
-        try {
-            String timeStr = file.getOriginalFilename().split("\\.")[3];
 
-            filePath = saveFileToLocal(file);
+        String filePath = "";
+        String timeStr = file.getOriginalFilename().split("\\.")[3];
+
+        filePath = saveFileToLocal(file);
+
+        return analyzeNc(filePath, timeStr);
+    }
+
+    private boolean analyzeNc(String filePath, String timeStr) {
+        NetcdfFile ncFile = null;
+        try {
+
             ncFile = NetcdfDataset.open(filePath);
 
 
@@ -122,15 +135,141 @@ public class WindFieldServiceImpl implements WindFieldService, Constant {
             //将之前上传的apk删除
             String localPath = filePath;
             System.out.println(localPath);
-            File file2=new File(localPath);
-            if(file2.exists()){
-                Boolean result=file2.delete();
+            File file2 = new File(localPath);
+            if (file2.exists()) {
+                Boolean result = file2.delete();
                 System.out.println(result);
             }
 
         }
         return false;
     }
+
+    @Override
+    public boolean analyzeNCZIPFile(MultipartFile originalFile) {
+//
+        try {
+            File file = multipartFileToFile(originalFile);
+
+            List<String> resultFilePathList = handleZipFile(file);
+            for (String path : resultFilePathList) {
+                String timeStr = path.split("\\.")[3];
+               if(!analyzeNc(path, timeStr)){
+                   return false;
+               }
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private List<String> handleZipFile(File originFile) {
+        // 读取 PDF 文件
+        ZipFile zipFile;
+        try {
+            zipFile = new ZipFile(originFile);
+        } catch (IOException e) {
+            logger.error("打开 zip 文件失败", e);
+            return null;
+        }
+
+        // 目标文件的 List
+        List<File> resultFileList = new ArrayList<>(32);
+        List<String> resultFilePathList = new ArrayList<>(32);
+        // 重新定义临时目录
+        final String tmpdir = TMP_DIR + "current" + File.separator;
+
+        // ZipEntry 迭代
+        Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+        try {
+            while (entries.hasMoreElements()) {
+                ZipEntry zipEntry = entries.nextElement();
+                // 源文件名
+                String fileName = zipEntry.getName();
+                // 文件 URL
+                final String destPath = tmpdir + fileName;
+                File originalFile = new File(destPath);
+
+
+                // 直接将此文件下载到临时目录并加入 resultFileList
+                FileUtils.downloadFileLocal(zipFile.getInputStream(zipEntry), destPath);
+                // 加入进去
+                resultFileList.add(originalFile);
+                resultFilePathList.add(destPath);
+                continue;
+
+
+            }
+        } catch (IOException e) {
+            logger.error("从 ZipFile 中 根据 ZipEntry 获取 InputStream 流异常", e);
+//            Assert.fail(String.format("从 ZipFile 中 根据 ZipEntry 获取 InputStream 流异常:[%s]", e.getMessage()));
+            FileUtils.deleteFiles(resultFileList);
+            return null;
+        } finally {
+            try {
+                zipFile.close();
+            } catch (IOException e) {
+                logger.error("关闭流时异常", e);
+            }
+        }
+
+        return resultFilePathList;
+    }
+
+
+    /**
+     * MultipartFile 转 File
+     *
+     * @param file
+     * @throws Exception
+     */
+    public static File multipartFileToFile(MultipartFile file) throws Exception {
+
+        File toFile = null;
+        if (file.equals("") || file.getSize() <= 0) {
+            file = null;
+        } else {
+            InputStream ins = null;
+            ins = file.getInputStream();
+            toFile = new File(file.getOriginalFilename());
+            inputStreamToFile(ins, toFile);
+            ins.close();
+        }
+        return toFile;
+    }
+
+    //获取流文件
+    private static void inputStreamToFile(InputStream ins, File file) {
+        try {
+            OutputStream os = new FileOutputStream(file);
+            int bytesRead = 0;
+            byte[] buffer = new byte[8192];
+            while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.close();
+            ins.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 删除本地临时文件
+     *
+     * @param file
+     */
+    public static void delteTempFile(File file) {
+        if (file != null) {
+            File del = new File(file.toURI());
+            del.delete();
+        }
+    }
+
 
     private String saveFileToLocal(MultipartFile file) {
 

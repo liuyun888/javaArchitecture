@@ -3,6 +3,8 @@ package com.demo.gis.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,7 +18,8 @@ import java.sql.Timestamp;
  * @author: LiuYunKai
  * @create: 2020-03-06 14:40
  **/
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @ApiModel
 @Document(collection = "typhoon_wind_field")

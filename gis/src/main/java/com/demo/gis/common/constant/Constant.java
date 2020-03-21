@@ -19,5 +19,6 @@ public interface Constant {
     String FLOAT = "FLOAT";
     String DOUBLE = "DOUBLE";
 
+    String SYMBOL_DOT = ".";
 
 }
