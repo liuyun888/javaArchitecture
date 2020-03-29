@@ -33,17 +33,21 @@ public class preLineAnalyze {
     //生成等值线主方法
     public static Map<String, Object> isolineProcess() throws IOException {
         Map<String, Object> resMap = new HashMap<String, Object>();
-        String filePath = "E:\\workspace\\GIS\\数据\\气压-NC\\PresMeanSeaLevel201803\\PresMeanSeaLevel_EC20180301.nc";//文件路径
-        String element = "msl";//nc变量名
-        int depthIndex = 1;//nc文件深度序列
-        int timeIndex = 1;//nc文件时间序列
+        //文件路径
+        String filePath = "D:\\GIS\\数据\\气压-NC\\PresMeanSeaLevel201803\\PresMeanSeaLevel_EC20180325.nc";
+        //nc变量名
+        String element = "msl";
+        //nc文件深度序列
+        int depthIndex = 1;
+        //nc文件时间序列
+        int timeIndex = 1;
         //获取NC的数据
         Map map = getNcData(filePath, element, depthIndex, timeIndex);
         if (map == null || map.size() == 0) {
             return resMap;
         }
         //等值线等值面间隔,间隔越小:过渡越均匀,性能消耗越大,响应越慢
-        double[] dataInterval = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        double[] dataInterval = new double[]{995,1000,1005,1010,1015,1020,1025,1030};
         String strGeojson = nc2EquiSurface(map, dataInterval);
         resMap.put("geojson", strGeojson);
         resMap.put("dataArr", map.get("eleData"));
@@ -60,7 +64,6 @@ public class preLineAnalyze {
         String var2 = "latitude";
         String var4 = "msl";
 
-
         Variable v1 = ncfile.findVariable(var1);
         Variable v2 = ncfile.findVariable(var2);
         Variable v4 = ncfile.findVariable(var4);
@@ -74,7 +77,7 @@ public class preLineAnalyze {
     }
 
     //处理nc经纬度
-    private static Map parseFloatToDouble(float[] lonArr, float[] latArr,float[][] msl) {
+    private static Map parseFloatToDouble(float[] lonArr, float[] latArr, float[][] msl) {
         Map map = new HashMap();
 
         //创建double数组存放经纬度数据，方便后续计算
@@ -87,10 +90,10 @@ public class preLineAnalyze {
             dLat[i] = Double.parseDouble(String.valueOf(latArr[i]));
         }
 
-        for (int i = 0; i < latArr.length; i++){
-            for (int j = 0; j < lonArr.length;j++){
+        for (int i = 0; i < latArr.length; i++) {
+            for (int j = 0; j < lonArr.length; j++) {
 
-                ele[i][j] =  Double.parseDouble(String.valueOf(msl[i][j]));
+                ele[i][j] = Double.parseDouble(String.valueOf(msl[i][j]/100));
 
             }
         }
@@ -98,7 +101,6 @@ public class preLineAnalyze {
         map.put("lon", dLon);
         map.put("lat", dLat);
         map.put("eleData", ele);
-        map.put("invalid", -9999.0);
         return map;
     }
 
@@ -113,16 +115,14 @@ public class preLineAnalyze {
         double[][] _gridData = (double[][]) ncData.get("eleData");
         int[][] S1 = new int[_gridData.length][_gridData[0].length];
         double[] _X = (double[]) ncData.get("lon"), _Y = (double[]) ncData.get("lat");
-        double _undefData = (double) ncData.get("invalid");
-        List<Border> _borders = Contour.tracingBorders(_gridData, _X, _Y,
-                S1, _undefData);
+        double _undefData = -9999.0;
+        List<Border> _borders = Contour.tracingBorders(_gridData, _X, _Y, S1, _undefData);
         int nc = dataInterval.length;
-        cPolylineList = Contour.tracingContourLines(_gridData, _X, _Y, nc,
-                dataInterval, _undefData, _borders, S1);// 生成等值线
-
-        cPolylineList = Contour.smoothLines(cPolylineList);// 平滑
-        cPolygonList = Contour.tracingPolygons(_gridData, cPolylineList,
-                _borders, dataInterval);
+        // 生成等值线
+        cPolylineList = Contour.tracingContourLines(_gridData, _X, _Y, nc, dataInterval, _undefData, _borders, S1);
+        // 平滑
+        cPolylineList = Contour.smoothLines(cPolylineList);
+        cPolygonList = Contour.tracingPolygons(_gridData, cPolylineList, _borders, dataInterval);
 
         geojsonpogylon = getPolygonGeoJson(cPolygonList);
 
@@ -151,7 +151,7 @@ public class preLineAnalyze {
                 }
                 List<Object> list3D = new ArrayList<Object>();
                 list3D.add(ptsTotal);
-                JSONObject  js = new JSONObject();
+                JSONObject js = new JSONObject();
                 js.put("type", "Polygon");
                 js.put("coordinates", list3D);
 

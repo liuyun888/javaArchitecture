@@ -19,7 +19,7 @@ public class CurrentNcAnalyze {
 
         try {
             NetcdfFile ncfile = null;
-            ncfile = NetcdfDataset.open("E:\\workspace\\GIS\\数据\\流场 -- NC\\Current202002241624.nc");
+            ncfile = NetcdfDataset.open("D:\\GIS\\数据\\流场 -- NC\\03\\01\\Current201803010000.nc");
             // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
             String var1 = "lon";
             String var2 = "lat";

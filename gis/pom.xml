@@ -85,11 +85,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.meteothink</groupId>
             <artifactId>wContour</artifactId>
             <version>1.6.1</version>
         </dependency>
+
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
