@@ -98,11 +98,7 @@
             <version>2.3</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>github-com-polymer-polymer</artifactId>
-            <version>2.5.0</version>
-        </dependency>
+
 
     </dependencies>
 

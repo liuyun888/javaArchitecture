@@ -7,13 +7,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
- * Spring Boot 相关辅助类
- * @author Administrator
- */
+ * @program: javaArchitecture
+ * @description:
+ * @author: LiuYunKai
+ * @create: 2020-03-30 19:00
+ **/
 public class SpringHelper {
-
     private static ApplicationContext APPLICATION_CONTEXT;
 
     /**
