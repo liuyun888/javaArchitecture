@@ -1,12 +1,8 @@
 package com.demo.gis.service.impl;
 
-import java.io.File;
-
 import com.demo.gis.common.constant.Constant;
 import com.demo.gis.common.toolUtil.FileUtils;
 import com.demo.gis.common.toolUtil.JacksonUtils;
-import com.demo.gis.controller.NetCdfController;
-import com.demo.gis.entity.TyphoonWindField;
 import com.demo.gis.repository.TyphoonWindFieldRepository;
 import com.demo.gis.service.WindFieldService;
 import com.demo.gis.vo.TyphoonWindFieldVo;
@@ -111,13 +107,13 @@ public class WindFieldServiceImpl implements WindFieldService, Constant {
             Date date = sdf.parse(timeStr);
             long ts = date.getTime();
 
-            TyphoonWindField typhoonWindField = new TyphoonWindField();
-            typhoonWindField.setId(timeStr);
-            typhoonWindField.setTime(ts);
-            typhoonWindField.setJson(jsonStr);
-
-
-            typhoonWindFieldRepository.save(typhoonWindField);
+//            TyphoonWindField typhoonWindField = new TyphoonWindField();
+//            typhoonWindField.setId(timeStr);
+//            typhoonWindField.setTime(ts);
+//            typhoonWindField.setJson(jsonStr);
+//
+//
+//            typhoonWindFieldRepository.save(typhoonWindField);
 
             return true;
         } catch (Exception e) {
@@ -154,9 +150,9 @@ public class WindFieldServiceImpl implements WindFieldService, Constant {
             List<String> resultFilePathList = handleZipFile(file);
             for (String path : resultFilePathList) {
                 String timeStr = path.split("\\.")[3];
-               if(!analyzeNc(path, timeStr)){
-                   return false;
-               }
+                if(!analyzeNc(path, timeStr)){
+                    return false;
+                }
             }
 
             return true;
