@@ -5,6 +5,7 @@ import com.demo.gis.common.toolUtil.CalendarUtils;
 import com.demo.gis.common.toolUtil.FiledNcAnalyze;
 import com.demo.gis.common.toolUtil.JacksonUtils;
 import com.demo.gis.entity.HotFieldHeader;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -54,20 +55,28 @@ public class EarthWindNcAnalyze implements Constant {
             Date date = CalendarUtils.getDateByTimeStamp(ts);
 
             int sub = 40;
-            short[][][] windU = (short[][][]) v4.read().copyToNDJavaArray();
-            HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoForDouble(lon, lat, ts, sub, 2, U_WIND);
 
-            short[][][] windV = (short[][][]) v5.read().copyToNDJavaArray();
-            HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoForDouble(lon, lat, ts, sub, 3, V_WIND);
+            int[] origin = new int[]{i, 0, 0};
+            int[] size = new int[]{1, lat.length, lon.length};
 
-            //开辟新数组长度为两数组之和
-            double[] UArr = FiledNcAnalyze.JoinArrayForEarthWind(lon.length, lat.length, windU,sub);
-            double[] VArr = FiledNcAnalyze.JoinArrayForEarthWind(lon.length, lat.length, windV,sub);
+            try {
+                short[][][] windU = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
 
+                short[][][] windV = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-            String json = InitJson(UType, VType, UArr, VArr, date);
+                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoForDouble(lon, lat, ts, sub, 2, U_WIND);
+                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoForDouble(lon, lat, ts, sub, 3, V_WIND);
 
-            System.out.println(json);
+                //开辟新数组长度为两数组之和
+                double[] UArr = FiledNcAnalyze.JoinArrayForEarthWind(lon.length, lat.length, windU, sub);
+                double[] VArr = FiledNcAnalyze.JoinArrayForEarthWind(lon.length, lat.length, windV, sub);
+
+                String json = InitJson(UType, VType, UArr, VArr, date);
+
+                System.out.println(json);
+            } catch (InvalidRangeException e) {
+                e.printStackTrace();
+            }
         }
     }
 

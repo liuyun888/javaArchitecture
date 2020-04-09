@@ -1,16 +1,17 @@
 package com.demo.gis.nc;
-import java.util.*;
-
 
 import com.demo.gis.common.toolUtil.JacksonUtils;
 import com.demo.gis.vo.TyphoonWindFieldVo;
+import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @program: javaArchitecture
@@ -54,6 +55,23 @@ public class WindNcAnalyze {
                 int[] time = (int[]) v3.read().copyToNDJavaArray();
                 float[][][] windu = (float[][][]) v4.read().copyToNDJavaArray();
                 float[][][] windv = (float[][][]) v5.read().copyToNDJavaArray();
+
+                int[] origin = new int[] { 0, 1, 1 };
+                int[] size = new int[] { 1, 50, 50 };
+                try {
+                    float[][][] windu2 = (float[][][]) v4.read(origin,size).copyToNDJavaArray();
+                    System.out.println("windu2.length :" + windu2.length);
+                    System.out.println("windu2[0].length :" + windu2[0].length);
+//
+                    System.out.println("windu2[0][0].length :" + windu2[0][0].length);
+                    System.out.println("windu2[0][0]:" + Arrays.toString(windu2[0][0]));
+                    Array array =  v4.read(origin,size);
+//                    System.out.println("读取从第一维的0开始,第二维从1开始,第三维从1开始,数量分别为2,2,2：\n" + NCdumpW.printArray(array));
+
+                } catch (InvalidRangeException e) {
+                    e.printStackTrace();
+                }
+
 
                 System.out.println("风场NC文件分析");
                 System.out.println("lon :" + Arrays.toString(lon));
