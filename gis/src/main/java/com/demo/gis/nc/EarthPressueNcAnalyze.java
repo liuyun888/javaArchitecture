@@ -14,23 +14,21 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-
 /**
  * @program: javaArchitecture
- * @description: 全球风场
+ * @description: 全球气压
  * @author: LiuYunKai
- * @create: 2020-04-03 16:33
+ * @create: 2020-04-10 15:07
  **/
-public class EarthWindNcAnalyze implements Constant {
+public class EarthPressueNcAnalyze  implements Constant {
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\风场  -- NC\\全球数据\\ecwmf_era5_u10v10_grid0.25_areafull_date2018_03_1to2018_03_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\气压-NC\\全球\\ecwmf_era5_pressure_grid0.25_areafull_date2018_03_1to2018_03_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
         String var3 = "time";
-        String var4 = "u10";
-        String var5 = "v10";
+        String var4 = "msl";
 
         Variable v1 = ncFile.findVariable(var1);
         Variable v2 = ncFile.findVariable(var2);
@@ -38,7 +36,6 @@ public class EarthWindNcAnalyze implements Constant {
         Variable v3 = ncFile.findVariable(var3);
         //:missing_value  ---> Double
         Variable v4 = ncFile.findVariable(var4);
-        Variable v5 = ncFile.findVariable(var5);
 
         float[] lon = (float[]) v1.read().copyToNDJavaArray();
         float[] lat = (float[]) v2.read().copyToNDJavaArray();
@@ -60,44 +57,37 @@ public class EarthWindNcAnalyze implements Constant {
             int[] size = new int[]{1, lat.length, lon.length};
 
             try {
-                short[][][] windU = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
+                short[][][] msl = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
 
-                short[][][] windV = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
-
-                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoByLat(lon, lat, ts, sub, 2, U_WIND);
-                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoByLat(lon, lat, ts, sub, 3, V_WIND);
+                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoByLat(lon, lat, ts, sub, 0, PRES);
 
                 //开辟新数组长度为两数组之和
-                double[] UArr = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, windU, sub, WIND);
-                double[] VArr = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, windV, sub, WIND);
+                double[] data = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, msl, sub, PRES);
 
-                String json = InitJson(UType, VType, UArr, VArr, date);
+                String jsonStr = InitHotJson(header, data);
 
-                System.out.println(json);
+                System.out.println(jsonStr);
             } catch (InvalidRangeException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static String InitJson(HotFieldHeader UType, HotFieldHeader VType, double[] UArr, double[] VArr, Date date) {
+
+
+    //热力图的json
+    public static String InitHotJson(HotFieldHeader header, double[] data) {
         List infoList = new ArrayList<>();
         Map<String, Object> UInfoMap = new HashMap<>(4);
-        UInfoMap.put("header", UType);
-        UInfoMap.put("data", UArr);
-        UInfoMap.put("meta", date);
+        UInfoMap.put("header", header);
+        UInfoMap.put("data", data);
         infoList.add(UInfoMap);
 
-        Map<String, Object> VInfoMap = new HashMap<>(4);
-        VInfoMap.put("header", VType);
-        VInfoMap.put("data", VArr);
-        VInfoMap.put("meta", date);
-        infoList.add(VInfoMap);
-
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("dataJson", infoList);
-        String jsonStr = JacksonUtils.toJSONString(data);
+        Map<String, Object> result = new HashMap<>(1);
+        result.put("dataJson", infoList);
+        String jsonStr = JacksonUtils.toJSONString(result);
 
         return jsonStr;
     }
+
 }

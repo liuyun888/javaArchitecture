@@ -33,4 +33,9 @@ public interface Constant {
 
     String U_WIND = "U-component_of_wind";
     String V_WIND = "V-component_of_wind";
+
+    String PRES = "Pres";
+    String AIR_TEM = "Temperature";
+    String SALT = "Salt";
+    String WIND = "Wind";
 }

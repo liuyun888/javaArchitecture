@@ -4,7 +4,6 @@ import com.demo.springdataredis.common.result.Result;
 import com.demo.springdataredis.service.TestRedisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @author: LiuYunKai
  * @create: 2020-03-21 16:08
  **/
-@Api(tags = "单机Redis测试控制器")
-@Slf4j
+@Api(tags = "Redis测试控制器")
 @RestController
 @RequestMapping("v1/test")
 public class TestRedisController {

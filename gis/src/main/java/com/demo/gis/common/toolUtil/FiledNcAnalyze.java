@@ -12,35 +12,45 @@ import com.demo.gis.common.constant.Constant;
  **/
 public class FiledNcAnalyze implements Constant {
 
-    public static double[] JoinArrayForEarthWind(int lon, int lat, short[][][] wind, int sub) {
-        int lonLength = lon / sub + 1;
+    //不需要调换纬度数据的用
+    public static double[] JoinArrayForEarth(int lon, int lat, short[][][] dataArray, int sub, String name) {
         int latLength = lat / sub + 1;
-        int windLength = wind[0].length;
+        int lonLength = lon / sub + 1;
+        int arrayLength = dataArray[0].length;
 
         //NC数据 lat在外，lon在内，不需要调换lat
-        double[] arr = new double[lonLength * latLength];
-        for (int i = 0, n = 0; i < windLength; i += sub, n++) {
+        double[] arr = new double[latLength * lonLength];
+        for (int i = 0, index2 = 0; i < arrayLength; i += sub, index2++) {
             //第i个经度数组
-            short[] arr1 = wind[0][i];
+            short[] arr1 = dataArray[0][i];
 
             //清洗数据后的数组
-            double[] arr2 = new double[lonLength - 1];
+            double[] arr2 = new double[lonLength-1];
 
-            for (int j = 0, m = 0; j < arr1.length; j += sub, m++) {
+            for (int j = 0, index = 0; j < arr1.length; j += sub, index++) {
+                if (WIND.equals(name)) {
+                    short sh = (arr1[j] == -32767 ? 0 : arr1[j]);
+                    double val = sh * 0.0010621605509104192 + 1.1575595057707537;
+                    //保留小数4位
+                    val = (double) Math.round(val * 10000) / 10000;
 
-                short sh = (arr1[j] == -32767 ? 0 : arr1[j]);
+                    arr2[index] = (val == -32767 ? 0 : val);
+                }else if (AIR_TEM.equals(name)) {
+                    arr2[index] = (double) ((arr1[j] == -32767.0 ? 0 : arr1[j]) + 273.15);
+                } else if (PRES.equals(name)) {
+                    short sh = (arr1[j] == -32767 ? 0 : arr1[j]);
+                    double val = sh * 0.1983218378526849 + 99766.52583908108;
+                    //保留小数4位
+                    val = (double) Math.round(val * 10000) / 10000;
+                    arr2[index] = (val == -32767 ? 0 : val);
 
-                double val = sh * 0.0010621605509104192 + 1.1575595057707537;
-
-                arr2[m] = (val == -32767 ? 0 : val);
+                } else if (SALT.equals(name)) {
+                    arr2[index] = (arr1[j] == 9999.0 ? 0 : arr1[j]);
+                }
             }
 
-            System.arraycopy(arr2, 0, arr, n * arr2.length, arr2.length);
-
-//            System.arraycopy(arr1, 0, arr, i * arr1.length, arr1.length);
+            System.arraycopy(arr2, 0, arr, index2 * arr2.length, arr2.length);
         }
         return arr;
     }
-
-
 }

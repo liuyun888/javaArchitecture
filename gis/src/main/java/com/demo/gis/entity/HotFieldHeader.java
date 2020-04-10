@@ -118,8 +118,9 @@ public class HotFieldHeader implements Constant {
     private Object dy;
 
 
-    /**================适用于风场======================**/
-    public static HotFieldHeader InitTyphoonInfoForDouble(float[] lon, float[] lat, long ts,int sub, int num, String name) {
+
+    /**================适用于纬度先大后小的数据======================**/
+    public static HotFieldHeader InitTyphoonInfoByLat(float[] lon, float[] lat, long ts, int sub, int num, String name) {
         HotFieldHeader header = new HotFieldHeader();
         header.setLo1(lon[0]);
         header.setLa1(lat[0]);
