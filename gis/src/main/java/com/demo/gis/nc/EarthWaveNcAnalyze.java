@@ -14,23 +14,22 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-
 /**
  * @program: javaArchitecture
- * @description: 全球风场
+ * @description: 全球海浪
  * @author: LiuYunKai
- * @create: 2020-04-03 16:33
+ * @create: 2020-04-10 18:02
  **/
-public class EarthWindNcAnalyze implements Constant {
+public class EarthWaveNcAnalyze implements Constant {
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\风场  -- NC\\全球数据\\ecwmf_era5_u10v10_grid0.25_areafull_date2018_03_1to2018_03_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\海浪-NC\\全球\\ecwmf_era5_wave_grid0.5_areafull_date2018_03_1to2018_03_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
         String var3 = "time";
-        String var4 = "u10";
-        String var5 = "v10";
+        String var4 = "mwd";
+        String var5 = "swh";
 
         Variable v1 = ncFile.findVariable(var1);
         Variable v2 = ncFile.findVariable(var2);
@@ -60,16 +59,19 @@ public class EarthWindNcAnalyze implements Constant {
             int[] size = new int[]{1, lat.length, lon.length};
 
             try {
-                short[][][] windU = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
+                short[][][] mwd = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
 
-                short[][][] windV = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
+                short[][][] swh = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 2, U_WIND);
-                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 3, V_WIND);
+                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 2, U_WAVE);
+                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 3, V_WAVE);
 
+
+                //根据波高、波向计算UV
+                Map<String, double[]> map = getUV(lon, lat, swh, mwd, sub);
                 //开辟新数组长度为两数组之和
-                double[] UArr = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, windU, sub, WIND);
-                double[] VArr = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, windV, sub, WIND);
+                double[] UArr = map.get("UArr");
+                double[] VArr = map.get("VArr");
 
                 String json = InitJson(UType, VType, UArr, VArr, date);
 
@@ -78,6 +80,42 @@ public class EarthWindNcAnalyze implements Constant {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static Map<String, double[]> getUV(float[] lon, float[] lat, short[][][] swh, short[][][] mwd, int sub) {
+
+        int latLength = lat.length;
+        int lonLength = lon.length;
+        Map map = new HashMap<>(latLength / sub * lonLength / sub);
+        double[][][] uf = new double[1][latLength / sub + 1][lonLength / sub + 1];
+        double[][][] vf = new double[1][latLength / sub + 1][lonLength / sub + 1];
+        //NC数据 lat在外，lon在内，不需要调换lat
+        for (int i = 0, x = 0; i < latLength; i += sub, x++) {
+            for (int j = 0, y = 0; j < lonLength; j += sub, y++) {
+
+                short sh = (mwd[0][i][j] == -32767 ? 0 : mwd[0][i][j]);
+                double dir = sh * 0.005493474122534881 + 179.99918229043232;
+
+                short sh2 = (swh[0][i][j] == -32767 ? 0 : swh[0][i][j]);
+                double speed = sh2 * 2.1466761940023993E-4 + 7.064921819790635;
+
+                //获得弧度
+                double radian = 2 * Math.PI / 360 * dir;
+                double ud = speed * Math.sin(radian);
+                double vd = speed * Math.cos(radian);
+
+                uf[0][x][y] = (ud == -32522.76 ? 0 : ud);
+                vf[0][x][y] = (vd == -32522.76 ? 0 : vd);
+            }
+        }
+        //开辟新数组长度为两数组之和
+        double[] UArr = FiledNcAnalyze.JoinArrayForWave(lonLength, latLength, uf, sub);
+        double[] VArr = FiledNcAnalyze.JoinArrayForWave(lonLength, latLength, vf, sub);
+
+        map.put("UArr", UArr);
+        map.put("VArr", VArr);
+
+        return map;
     }
 
     public static String InitJson(HotFieldHeader UType, HotFieldHeader VType, double[] UArr, double[] VArr, Date date) {

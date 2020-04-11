@@ -38,4 +38,8 @@ public interface Constant {
     String AIR_TEM = "Temperature";
     String SALT = "Salt";
     String WIND = "Wind";
+    String WAVE = "Wave";
+
+    String U_WAVE = "U-component_of_wave";
+    String V_WAVE = "V-component_of_wave";
 }

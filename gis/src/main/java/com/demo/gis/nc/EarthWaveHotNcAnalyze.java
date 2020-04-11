@@ -16,26 +16,26 @@ import java.util.*;
 
 /**
  * @program: javaArchitecture
- * @description: 全球气压
+ * @description: 全球海浪热力图
  * @author: LiuYunKai
- * @create: 2020-04-10 15:07
+ * @create: 2020-04-11 11:34
  **/
-public class EarthPressueNcAnalyze  implements Constant {
+public class EarthWaveHotNcAnalyze implements Constant {
+
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\气压-NC\\全球\\ecwmf_era5_pressure_grid0.25_areafull_date2018_03_1to2018_03_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\海浪-NC\\全球\\ecwmf_era5_wave_grid0.5_areafull_date2018_03_1to2018_03_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
         String var3 = "time";
-        String var4 = "msl";
+        String var5 = "swh";
 
         Variable v1 = ncFile.findVariable(var1);
         Variable v2 = ncFile.findVariable(var2);
         //time ---> :timezone
         Variable v3 = ncFile.findVariable(var3);
-        //:missing_value  ---> Double
-        Variable v4 = ncFile.findVariable(var4);
+        Variable v5 = ncFile.findVariable(var5);
 
         float[] lon = (float[]) v1.read().copyToNDJavaArray();
         float[] lat = (float[]) v2.read().copyToNDJavaArray();
@@ -51,18 +51,18 @@ public class EarthPressueNcAnalyze  implements Constant {
 
             Date date = CalendarUtils.getDateByTimeStamp(ts);
 
-            int sub = 4;
+            int sub = 40;
 
             int[] origin = new int[]{i, 0, 0};
             int[] size = new int[]{1, lat.length, lon.length};
 
             try {
-                short[][][] msl = (short[][][]) v4.read(origin, size).copyToNDJavaArray();
+                short[][][] swh = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 0, PRES);
+                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 0, WAVE);
 
                 //开辟新数组长度为两数组之和
-                double[] data = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, msl, sub, PRES);
+                double[] data = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, swh, sub, WAVE);
 
                 String jsonStr = InitHotJson(header, data);
 
@@ -72,9 +72,6 @@ public class EarthPressueNcAnalyze  implements Constant {
             }
         }
     }
-
-
-
     //热力图的json
     public static String InitHotJson(HotFieldHeader header, double[] data) {
         List infoList = new ArrayList<>();

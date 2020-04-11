@@ -119,15 +119,13 @@ public class HotFieldHeader implements Constant {
 
 
 
-    /**================适用于纬度先大后小的数据======================**/
-    public static HotFieldHeader InitTyphoonInfoByLat(float[] lon, float[] lat, long ts, int sub, int num, String name) {
+
+    public static HotFieldHeader InitTyphoonInfoByLatForEarth(float[] lon, float[] lat, long ts, int sub, int num, String name) {
         HotFieldHeader header = new HotFieldHeader();
-        header.setLo1(lon[0]);
-        header.setLa1(lat[0]);
-
-        header.setLo2(lon[lon.length - 1]);
-        header.setLa2(lat[lat.length - 1]);
-
+        header.setLo1(-130.0D);
+        header.setLa1(90.0D);
+        header.setLo2(230.0D);
+        header.setLa2(-90.0D);
         header.setDx(lon[sub] - lon[0]);
         header.setDy(lat[0] - lat[sub]);
         header.setNx(lon.length / sub + 1);
