@@ -39,7 +39,12 @@ public interface Constant {
     String SALT = "Salt";
     String WIND = "Wind";
     String WAVE = "Wave";
+    String SEA_TEM = "Sea_temperature";
+    String CURRENT = "Current";
 
     String U_WAVE = "U-component_of_wave";
     String V_WAVE = "V-component_of_wave";
+
+    String U_CURRENT = "U-component_of_current";
+    String V_CURRENT = "V-component_of_current";
 }

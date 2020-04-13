@@ -137,4 +137,21 @@ public class HotFieldHeader implements Constant {
         return header;
     }
 
+    public static HotFieldHeader InitTyphoonInfoByLatForEarthCurrent(float[] lon, float[] lat, long ts, int sub, int num, String name) {
+        HotFieldHeader header = new HotFieldHeader();
+        header.setLo1(105D);
+        header.setLa1(16.0D);
+        header.setLo2(130.0D);
+        header.setLa2(41.0D);
+        header.setDx(lon[sub] - lon[0]);
+        header.setDy(lat[0] - lat[sub]);
+        header.setNx(lon.length / sub + 1);
+        header.setNy(lat.length / sub + 1);
+        header.setNumberPoints((lon.length / sub + 1) * (lat.length / sub + 1));
+        header.setRefTime(ts);
+        header.setParameterNumber(num);
+        header.setParameterNumberName(name);
+        return header;
+    }
+
 }
