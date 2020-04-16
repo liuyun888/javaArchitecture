@@ -23,7 +23,7 @@ import java.util.*;
 public class EarthSeaTemperatureNcAnalyze implements Constant {
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\海温 -- NC\\ecwmf_era5_temperature_grid0.25_areafull_date2017_12_1to2017_12_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\海温 -- NC\\ecwmf_era5_temperature_grid0.25_areafull_date2020_01_1to2020_01_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
@@ -50,7 +50,7 @@ public class EarthSeaTemperatureNcAnalyze implements Constant {
 
             Date date = CalendarUtils.getDateByTimeStamp(ts);
 
-            int sub = 40;
+            int sub = 4;
 
             int[] origin = new int[]{i, 0, 0};
             int[] size = new int[]{1, lat.length, lon.length};
@@ -58,7 +58,7 @@ public class EarthSeaTemperatureNcAnalyze implements Constant {
             try {
                 short[][][] sst = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 0, SEA_TEM);
+                HotFieldHeader header = InitTyphoonInfo(lon, lat, ts, sub, 0, SEA_TEM);
 
                 //开辟新数组长度为两数组之和
                 double[] data = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, sst, sub, SEA_TEM);
@@ -70,6 +70,23 @@ public class EarthSeaTemperatureNcAnalyze implements Constant {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static HotFieldHeader InitTyphoonInfo(float[] lon, float[] lat, long ts, int sub, int num, String name) {
+        HotFieldHeader header = new HotFieldHeader();
+        header.setLo1(-100);
+        header.setLa1(90.0);
+        header.setLo2(259.5);
+        header.setLa2(-90.0);
+        header.setDx(lon[sub] - lon[0]);
+        header.setDy(lat[0] - lat[sub]);
+        header.setNx(lon.length / sub + 1);
+        header.setNy(lat.length / sub + 1);
+        header.setNumberPoints((lon.length / sub + 1) * (lat.length / sub + 1));
+        header.setRefTime(ts);
+        header.setParameterNumber(num);
+        header.setParameterNumberName(name);
+        return header;
     }
 
     //热力图的json

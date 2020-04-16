@@ -125,7 +125,7 @@ public class FiledNcAnalyze implements Constant {
             for (int j = 0; j < lonLength; j++) {
                 //保留小数4位
                 double val = (double) Math.round(arr1[j] * 1000000) / 1000000;
-                arr2[j] = (val == 1.01E-4 ? 0 : val);
+                arr2[j] = (val == 1.01E-4 ||val ==  -7.064922 ? 0 : val);
             }
 
             System.arraycopy(arr2, 0, arr, index2 * arr2.length, arr2.length);

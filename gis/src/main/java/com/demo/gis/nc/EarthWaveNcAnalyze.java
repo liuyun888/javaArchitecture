@@ -63,8 +63,8 @@ public class EarthWaveNcAnalyze implements Constant {
 
                 short[][][] swh = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 2, U_WAVE);
-                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 3, V_WAVE);
+                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoForEarth(lon, lat, ts, sub, 2, U_WAVE);
+                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoForEarth(lon, lat, ts, sub, 3, V_WAVE);
 
 
                 //根据波高、波向计算UV

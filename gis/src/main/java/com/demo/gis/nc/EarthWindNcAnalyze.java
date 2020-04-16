@@ -24,7 +24,7 @@ import java.util.*;
 public class EarthWindNcAnalyze implements Constant {
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\风场  -- NC\\全球数据\\ecwmf_era5_u10v10_grid0.25_areafull_date2018_03_1to2018_03_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("\\\\WIN-IUAMNCH1MDJ\\ecwmf_era5_u10v10_grid0.25_areafull\\ecwmf_era5_u10v10_grid0.25_areafull_date2020_03_1to2020_03_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
@@ -64,8 +64,8 @@ public class EarthWindNcAnalyze implements Constant {
 
                 short[][][] windV = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 2, U_WIND);
-                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 3, V_WIND);
+                HotFieldHeader UType = HotFieldHeader.InitTyphoonInfoForEarth(lon, lat, ts, sub, 2, U_WIND);
+                HotFieldHeader VType = HotFieldHeader.InitTyphoonInfoForEarth(lon, lat, ts, sub, 3, V_WIND);
 
                 //开辟新数组长度为两数组之和
                 double[] UArr = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, windU, sub, WIND);

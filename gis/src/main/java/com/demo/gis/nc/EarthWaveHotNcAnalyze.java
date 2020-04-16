@@ -59,7 +59,7 @@ public class EarthWaveHotNcAnalyze implements Constant {
             try {
                 short[][][] swh = (short[][][]) v5.read(origin, size).copyToNDJavaArray();
 
-                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoByLatForEarth(lon, lat, ts, sub, 0, WAVE);
+                HotFieldHeader header = HotFieldHeader.InitTyphoonInfoForEarth(lon, lat, ts, sub, 0, WAVE);
 
                 //开辟新数组长度为两数组之和
                 double[] data = FiledNcAnalyze.JoinArrayForEarth(lon.length, lat.length, swh, sub, WAVE);

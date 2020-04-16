@@ -3,7 +3,8 @@ package com.demo.gis.entity;
 import com.demo.gis.common.constant.Constant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
@@ -12,7 +13,8 @@ import lombok.experimental.Accessors;
  * @author: LiuYunKai
  * @create: 2020-04-02 09:52
  **/
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @ApiModel
 public class HotFieldHeader implements Constant {
@@ -117,7 +119,22 @@ public class HotFieldHeader implements Constant {
     @ApiModelProperty(value = "纬度间隔值")
     private Object dy;
 
-
+    public static HotFieldHeader InitTyphoonInfoForEarth(float[] lon, float[] lat, long ts, int sub, int num, String name) {
+        HotFieldHeader header = new HotFieldHeader();
+        header.setLo1(lon[0]);
+        header.setLa1(lat[0]);
+        header.setLo2(lon[lon.length-1]);
+        header.setLa2(lat[lat.length-1]);
+        header.setDx(lon[sub] - lon[0]);
+        header.setDy(lat[0] - lat[sub]);
+        header.setNx(lon.length / sub + 1);
+        header.setNy(lat.length / sub + 1);
+        header.setNumberPoints((lon.length / sub + 1) * (lat.length / sub + 1));
+        header.setRefTime(ts);
+        header.setParameterNumber(num);
+        header.setParameterNumberName(name);
+        return header;
+    }
 
 
     public static HotFieldHeader InitTyphoonInfoByLatForEarth(float[] lon, float[] lat, long ts, int sub, int num, String name) {
