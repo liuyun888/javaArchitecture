@@ -9,9 +9,12 @@ import java.io.InputStream;
  * @create: 2020-04-28 09:49
  **/
 public interface FtpClientService {
-    public String readFileToBase64(String remoteFileName, String remoteDir);
+    String readFileToBase64(String remoteFileName, String remoteDir);
 
-    public void download(String remoteFileName, String localFileName, String remoteDir);
+    void download(String remoteFileName, String localFileName, String remoteDir);
 
-    public boolean uploadFile(InputStream inputStream, String originName, String remoteDir);
+    boolean uploadFile(InputStream inputStream, String originName, String remoteDir);
+
+    void downLoadTodayFile();
+
 }

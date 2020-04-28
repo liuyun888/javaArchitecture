@@ -1,5 +1,6 @@
 package com.demo.ftp.schedule;
 
+import com.demo.ftp.service.FtpClientService;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 
 /**
  * @program: javaArchitecture
@@ -32,6 +31,8 @@ public class DynamicScheduleTask implements SchedulingConfigurer {
     @Autowired      //注入mapper
     @SuppressWarnings("all")
     CronMapper cronMapper;
+    @Autowired
+    FtpClientService ftpClientService;
 
     /**
      * 执行定时任务.
@@ -41,7 +42,8 @@ public class DynamicScheduleTask implements SchedulingConfigurer {
 
         taskRegistrar.addTriggerTask(
                 //1.添加任务内容(Runnable)
-                () -> System.out.println("执行动态定时任务: " + LocalDateTime.now().toLocalTime()),
+//                () -> System.out.println("执行动态定时任务: " + LocalDateTime.now().toLocalTime()),
+                () -> ftpClientService.downLoadTodayFile(),
                 //2.设置执行周期(Trigger)
                 triggerContext -> {
                     //2.1 从数据库获取执行周期
@@ -56,4 +58,5 @@ public class DynamicScheduleTask implements SchedulingConfigurer {
                 }
         );
     }
+
 }

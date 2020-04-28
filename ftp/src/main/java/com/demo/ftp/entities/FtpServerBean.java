@@ -27,7 +27,7 @@ public class FtpServerBean {
     public FTPClient ftpClient() {
 //        BeansEntity beansEntity =new BeansEntity();
         FTPClient ftpClient = new FTPClient();
-        ftpClient.setConnectTimeout(1000 * 30);//设置连接超时时间
+//        ftpClient.setConnectTimeout(1000 * 30);//设置连接超时时间
         ftpClient.setControlEncoding("utf-8");//设置ftp字符集
 //        ftpClient.enterLocalPassiveMode();//设置被动模式，文件传输端口设置
         try {
