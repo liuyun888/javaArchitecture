@@ -1,6 +1,6 @@
-package com.demo.gis;
+package com.demo.ftp;
 
-import com.demo.gis.common.spring.SpringHelper;
+import com.demo.ftp.common.spring.SpringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
@@ -15,20 +15,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @EnableSwagger2
 @SpringBootApplication
-public class GisApplication extends SpringBootServletInitializer {
+public class FtpApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application){
-        return application.sources(GisApplication.class);
+        return application.sources(FtpApplication.class);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(GisApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(FtpApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(GisApplication.class);
+        SpringApplication application = new SpringApplication(FtpApplication.class);
         application.setBannerMode(Banner.Mode.CONSOLE);
         SpringHelper.setApplicationContext(application.run(args));
-        GisApplication.logger.info("GisService start!\t http://localhost:8880/swagger-ui.html");
+        FtpApplication.logger.info("FtpApplication start!\t http://localhost:2020/swagger-ui.html");
     }
-
 }

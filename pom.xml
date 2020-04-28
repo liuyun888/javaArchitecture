@@ -24,6 +24,7 @@
         <module>redis</module>
         <module>spring-data-redis</module>
         <module>spring-boot-oss</module>
+        <module>ftp</module>
     </modules>
 
 

@@ -24,7 +24,7 @@ import java.util.*;
 public class EarthWindNcAnalyze implements Constant {
 
     public static void main(String[] args) throws IOException, ParseException {
-        NetcdfFile ncFile = NetcdfDataset.open("\\\\WIN-IUAMNCH1MDJ\\ecwmf_era5_u10v10_grid0.25_areafull\\ecwmf_era5_u10v10_grid0.25_areafull_date2020_03_1to2020_03_31.nc");
+        NetcdfFile ncFile = NetcdfDataset.open("D:\\GIS\\数据\\风场NC\\全球数据\\ecwmf_era5_u10v10_grid0.25_areafull_date2020_01_1to2020_01_31.nc");
         // 存经纬度 // 此处严格区分大小写，不然找不到，不知道有什么变量的可以断点debug一下，鼠标移到上面 ncfile 那行看
         String var1 = "longitude";
         String var2 = "latitude";
