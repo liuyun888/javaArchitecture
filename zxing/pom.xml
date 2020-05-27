@@ -3,32 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.java</groupId>
+        <artifactId>architecture</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.java</groupId>
-    <artifactId>architecture</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>architecture</name>
-    <description>java架构系列知识点</description>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>dynamic-proxy</module>
-        <module>reflection</module>
-        <module>jvm</module>
-        <module>gis</module>
-        <module>grafana</module>
-        <module>redis</module>
-        <module>spring-data-redis</module>
-        <module>spring-boot-oss</module>
-        <module>ftp</module>
-        <module>zxing</module>
-        <module>java-audition</module>
-    </modules>
-
+    <artifactId>zxing</artifactId>
+    <version>1.0</version>
+    <name>zxing</name>
+    <description>Demo project for 二维码</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -37,12 +20,37 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!--二维码-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+        <!-- swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <!-- swagger-ui -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.62</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -60,7 +68,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
     <build>
